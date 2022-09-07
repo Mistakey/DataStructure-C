@@ -2,8 +2,8 @@
 // create by lq on 2018/11/27
 //
 
-#include <malloc.h>
 #include <string.h>
+#include <stdlib.h>
 #include "../include/ds_list.h"
 #include "Unity/src/unity.h"
 

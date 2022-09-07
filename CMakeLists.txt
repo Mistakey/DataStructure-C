@@ -4,12 +4,12 @@ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 
 cmake_minimum_required(VERSION 3.9.2)
 
-project(DeepSea C)
+project(DataStructure C)
 
 set(CMAKE_C_STANDARD 99)
 set(PROJECT_VERSION 0.0.1)
 set(DS_VERSION_SO 1)
-set(DS_LIB deepSea)
+set(DS_LIB DataStructure)
 
 aux_source_directory(src SOURCE_DIR)
 aux_source_directory(tests/Unity/src UNITY_SOURCE_DIR)
@@ -36,12 +36,12 @@ else()
     set_target_properties(${DS_LIB}-static PROPERTIES PREFIX lib)
 endif()
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/library_config/libdeepSea.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/libdeepSea.pc @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/library_config/libDataStructure.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/libDataStructure.pc @ONLY)
 
 install(DIRECTORY include
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libdeepSea.pc
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDataStructure.pc
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/README.md
     DESTINATION ${CMAKE_INSTALL_LIBDIR})

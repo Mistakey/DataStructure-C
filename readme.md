@@ -1,2 +1,2 @@
-# DeepSea
-May you find your worth in the waking world
+# 这是什么
+一个个人为了提升对数据结构的理解，而实现的C语言数据结构通用接口
