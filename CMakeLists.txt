@@ -1,5 +1,6 @@
 # create by lq on 2018/11/16
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 
 cmake_minimum_required(VERSION 3.9.2)

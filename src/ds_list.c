@@ -2,40 +2,35 @@
 // create by lq on 2018/11/25
 //
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "../include/ds_list.h"
 
-typedef struct DsListEntry
-{
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct DsListEntry {
     void *data;
     struct DsListEntry *next;
     struct DsListEntry *prev;
 } DsListEntry;
-
-struct DsList
-{
+struct DsList {
     DsListEntry *entry;
     size_t size;
-    DS_BOOL(*equal)(void *a, void *b);
+    DS_BOOL (*equal)(void *a, void *b);
 };
 
-struct DsListIter
-{
+struct DsListIter {
     DsListEntry *head;
     DsListEntry *curr;
     size_t size;
     int index;
 };
 
-static DS_STATUS ds_entry_append(DsListEntry **entryAdd, DsListEntry *in)
-{
+static DS_STATUS ds_entry_append(DsListEntry **entryAdd, DsListEntry *in) {
     if (NULL == entryAdd || NULL == in)
         return DS_STATUS_NULL;
     if (NULL == *entryAdd)
         *entryAdd = in;
-    else
-    {
+    else {
         DsListEntry *entry = *entryAdd;
         while (entry->next)
             entry = entry->next;
@@ -46,14 +41,12 @@ static DS_STATUS ds_entry_append(DsListEntry **entryAdd, DsListEntry *in)
     return DS_STATUS_OK;
 }
 
-static DS_STATUS ds_entry_prepend(DsListEntry **entryAdd, DsListEntry *in)
-{
+static DS_STATUS ds_entry_prepend(DsListEntry **entryAdd, DsListEntry *in) {
     if (NULL == entryAdd || NULL == in)
         return DS_STATUS_NULL;
     if (NULL == *entryAdd)
         *entryAdd = in;
-    else
-    {
+    else {
         DsListEntry *entry = *entryAdd;
         in->next = entry;
         in->prev = entry->prev;
@@ -66,15 +59,13 @@ static DS_STATUS ds_entry_prepend(DsListEntry **entryAdd, DsListEntry *in)
     return DS_STATUS_OK;
 }
 
-static DS_STATUS ds_entry_remove(DsListEntry **entryAdd)
-{
+static DS_STATUS ds_entry_remove(DsListEntry **entryAdd) {
     if (NULL == entryAdd || NULL == *entryAdd)
         return DS_STATUS_NULL;
     DsListEntry *entry = *entryAdd;
     if (NULL == entry->next && NULL == entry->prev)
         *entryAdd = NULL;
-    else
-    {
+    else {
         if (entry->prev)
             entry->prev->next = entry->next;
         else
@@ -87,8 +78,7 @@ static DS_STATUS ds_entry_remove(DsListEntry **entryAdd)
     return DS_STATUS_OK;
 }
 
-DsList *ds_list_create(void)
-{
+DsList *ds_list_create(void) {
     DsList *list = (DsList *)malloc(sizeof(DsList));
     if (NULL == list)
         exit(DS_STATUS_OUTMEM);
@@ -98,22 +88,19 @@ DsList *ds_list_create(void)
     return list;
 }
 
-DsList *ds_list_create_equal(DS_BOOL (*equal)(void *a, void *b))
-{
+DsList *ds_list_create_equal(DS_BOOL (*equal)(void *a, void *b)) {
     DsList *list = ds_list_create();
     list->equal = equal;
     return list;
 }
 
-size_t ds_list_size(DsList *list)
-{
+size_t ds_list_size(DsList *list) {
     if (NULL == list)
         return 0;
     return list->size;
 }
 
-DS_STATUS ds_list_insert(DsList *list, int index, void *data)
-{
+DS_STATUS ds_list_insert(DsList *list, int index, void *data) {
     if (NULL == list)
         return DS_STATUS_NULL;
     if (index < 0 || index > list->size)
@@ -130,8 +117,7 @@ DS_STATUS ds_list_insert(DsList *list, int index, void *data)
 
     // ! 这里需要获取list->entry的地址
     DsListEntry **entry = &list->entry;
-    while ((*entry) && (*entry)->next && index > 0)
-    {
+    while ((*entry) && (*entry)->next && index > 0) {
         index--;
         // ! 需要改变的是entry的地址
         entry = &(*entry)->next;
@@ -142,8 +128,7 @@ DS_STATUS ds_list_insert(DsList *list, int index, void *data)
     else
         status = ds_entry_prepend(entry, in);
 
-    if (status != DS_STATUS_OK)
-    {
+    if (status != DS_STATUS_OK) {
         free(in);
         return DS_STATUS_NULL;
     }
@@ -152,8 +137,7 @@ DS_STATUS ds_list_insert(DsList *list, int index, void *data)
     return DS_STATUS_OK;
 }
 
-DS_STATUS ds_list_prepend(DsList *list, void *data)
-{
+DS_STATUS ds_list_prepend(DsList *list, void *data) {
     if (NULL == list)
         return DS_STATUS_NULL;
     DsListEntry *in = (DsListEntry *)malloc(sizeof(DsListEntry));
@@ -164,8 +148,7 @@ DS_STATUS ds_list_prepend(DsList *list, void *data)
     in->next = NULL;
 
     DsListEntry **entry = &list->entry;
-    if (DS_STATUS_OK != ds_entry_prepend(entry, in))
-    {
+    if (DS_STATUS_OK != ds_entry_prepend(entry, in)) {
         free(in);
         return DS_STATUS_NULL;
     }
@@ -174,8 +157,7 @@ DS_STATUS ds_list_prepend(DsList *list, void *data)
     return DS_STATUS_OK;
 }
 
-DS_STATUS ds_list_append(DsList *list, void *data)
-{
+DS_STATUS ds_list_append(DsList *list, void *data) {
     if (NULL == list)
         return DS_STATUS_NULL;
     DsListEntry *in = (DsListEntry *)malloc(sizeof(DsListEntry));
@@ -185,8 +167,7 @@ DS_STATUS ds_list_append(DsList *list, void *data)
     in->next = NULL;
     in->prev = NULL;
 
-    if (DS_STATUS_OK != ds_entry_append(&list->entry, in))
-    {
+    if (DS_STATUS_OK != ds_entry_append(&list->entry, in)) {
         free(in);
         return DS_STATUS_NULL;
     }
@@ -195,15 +176,13 @@ DS_STATUS ds_list_append(DsList *list, void *data)
     return DS_STATUS_OK;
 }
 
-DS_STATUS ds_list_remove(DsList *list, int index, void **pdata)
-{
+DS_STATUS ds_list_remove(DsList *list, int index, void **pdata) {
     if (NULL == list || NULL == list->entry)
         return DS_STATUS_NULL;
     if (index < 0 || index >= list->size)
         return DS_STATUS_OUTMEM;
     DsListEntry **entry = &list->entry;
-    while ((*entry)->next && index > 0)
-    {
+    while ((*entry)->next && index > 0) {
         index--;
         entry = &(*entry)->next;
     }
@@ -213,8 +192,7 @@ DS_STATUS ds_list_remove(DsList *list, int index, void **pdata)
     return ds_entry_remove(entry);
 }
 
-DS_STATUS ds_list_remove_first(DsList *list, void **pdata)
-{
+DS_STATUS ds_list_remove_first(DsList *list, void **pdata) {
     if (NULL == list || NULL == list->entry)
         return DS_STATUS_NULL;
 
@@ -226,8 +204,7 @@ DS_STATUS ds_list_remove_first(DsList *list, void **pdata)
     return ds_entry_remove(entry);
 }
 
-DS_STATUS ds_list_remove_last(DsList *list, void **pdata)
-{
+DS_STATUS ds_list_remove_last(DsList *list, void **pdata) {
     if (NULL == list || NULL == list->entry)
         return DS_STATUS_NULL;
 
@@ -241,14 +218,12 @@ DS_STATUS ds_list_remove_last(DsList *list, void **pdata)
     return ds_entry_remove(entry);
 }
 
-int ds_list_find_index(DsList *list, void *data)
-{
+int ds_list_find_index(DsList *list, void *data) {
     if (NULL == list || NULL == list->equal || NULL == list->entry)
         return -1;
     DsListEntry *entry = list->entry;
     int i = 0;
-    while (entry)
-    {
+    while (entry) {
         if ((*(list->equal))(data, entry->data))
             return i;
         i++;
@@ -257,16 +232,14 @@ int ds_list_find_index(DsList *list, void *data)
     return -1;
 }
 
-DS_STATUS ds_list_get(DsList *list, int index, void **pdata)
-{
+DS_STATUS ds_list_get(DsList *list, int index, void **pdata) {
     if (NULL == list || NULL == list->entry)
         return DS_STATUS_NULL;
     if (index < 0 || index >= list->size)
         return DS_STATUS_OUTMEM;
 
     DsListEntry *entry = list->entry;
-    while (entry && entry->next && index > 0)
-    {
+    while (entry && entry->next && index > 0) {
         index--;
         entry = entry->next;
     }
@@ -274,14 +247,11 @@ DS_STATUS ds_list_get(DsList *list, int index, void **pdata)
     return DS_STATUS_OK;
 }
 
-void ds_list_destroy(DsList **plist)
-{
-    if (*plist)
-    {
+void ds_list_destroy(DsList **plist) {
+    if (*plist) {
         DsList *list = *plist;
         DsListEntry *entry = list->entry;
-        while (entry)
-        {
+        while (entry) {
             DsListEntry *temp = entry;
             entry = entry->next;
             free(temp);
@@ -292,8 +262,7 @@ void ds_list_destroy(DsList **plist)
     return;
 }
 
-DsListIter *ds_list_iter_create(DsList *list)
-{
+DsListIter *ds_list_iter_create(DsList *list) {
     if (NULL == list)
         return NULL;
     DsListIter *iter = (DsListIter *)malloc(sizeof(DsListIter));
@@ -311,15 +280,13 @@ DsListIter *ds_list_iter_create(DsList *list)
     return iter;
 }
 
-DS_BOOL ds_list_iter_hasNext(DsListIter *iter)
-{
+DS_BOOL ds_list_iter_hasNext(DsListIter *iter) {
     if (NULL == iter)
         return DS_FALSE;
     return NULL != iter->curr->next;
 }
 
-DS_STATUS ds_list_iter_next(DsListIter *iter, void **pdata)
-{
+DS_STATUS ds_list_iter_next(DsListIter *iter, void **pdata) {
     if (NULL == iter || NULL == iter->curr)
         return DS_STATUS_NULL;
     iter->curr = iter->curr->next;
@@ -329,8 +296,7 @@ DS_STATUS ds_list_iter_next(DsListIter *iter, void **pdata)
     return DS_STATUS_OK;
 }
 
-DS_STATUS ds_list_iter_val(DsListIter *iter, void **pdata)
-{
+DS_STATUS ds_list_iter_val(DsListIter *iter, void **pdata) {
     if (NULL == iter || NULL == iter->curr)
         return DS_STATUS_NULL;
     if (NULL != pdata)
@@ -338,10 +304,8 @@ DS_STATUS ds_list_iter_val(DsListIter *iter, void **pdata)
     return DS_STATUS_OK;
 }
 
-void ds_list_iter_destroy(DsListIter **piter)
-{
-    if (*piter)
-    {
+void ds_list_iter_destroy(DsListIter **piter) {
+    if (*piter) {
         DsListIter *iter = *piter;
         free(iter->head);
         free(iter);

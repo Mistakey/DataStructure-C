@@ -1,27 +1,36 @@
-// test_ds_stack.c
-// create by lq on 2018/11/18
-//
+/*
+ * @Author: Kelch
+ * @Date: 2022-12-17 20:42:10
+ * @LastEditors: Kelch
+ * git
+ * @LastEditTime: 2022-12-18 03:56:13
+ * @FilePath: /DataStructure-C/tests/test_ds_stack.c
+ * @Description:
+ *
+ * QQ：331378054
+ * 希儿也想变得更可爱
+ * 希儿世界第一可爱
+ *
+ * Copyright (c) 2022 by Kelch, All Rights Reserved.
+ */
 
-#include <string.h>
 #include "../include/ds_stack.h"
 #include "Unity/src/unity.h"
+#include <string.h>
 
 DsStack *stack = NULL;
 
-void setUp(void)
-{
+void setUp(void) {
     stack = ds_stack_create(3);
     TEST_ASSERT_NOT_NULL_MESSAGE(stack, "stack initialize failed!");
 }
 
-void tearDown(void)
-{
+void tearDown(void) {
     ds_stack_destroy(&stack);
     TEST_ASSERT_NULL_MESSAGE(stack, "stack destroy failed!");
 }
 
-static void test_dsStack_counts()
-{
+static void test_dsStack_counts() {
     TEST_ASSERT_EQUAL_MESSAGE(ds_stack_counts(stack), 0, "unexpected counts!");
     ds_stack_push(stack, "aa");
     TEST_ASSERT_EQUAL_MESSAGE(ds_stack_counts(stack), 1, "unexpected counts!");
@@ -31,46 +40,42 @@ static void test_dsStack_counts()
     TEST_ASSERT_EQUAL_MESSAGE(ds_stack_counts(stack), 3, "unexpected counts!");
 }
 
-static void test_dsStack_overflow()
-{
+static void test_dsStack_overflow() {
     TEST_ASSERT_EQUAL_MESSAGE(ds_stack_counts(stack), 0, "unexpected counts!");
     DS_STATUS res;
-    char* strs[3] = {"aa", "bb", "cc"};
-    for(int i = 0; i < 3; ++i)
-    {
+    char *strs[3] = {"aa", "bb", "cc"};
+    for (int i = 0; i < 3; ++i) {
         ds_stack_push(stack, strs[i]);
-        TEST_ASSERT_EQUAL_MESSAGE(ds_stack_counts(stack), i+1, "unexpected counts!");
+        TEST_ASSERT_EQUAL_MESSAGE(ds_stack_counts(stack), i + 1,
+                                  "unexpected counts!");
     }
     res = ds_stack_push(stack, "dd");
     TEST_ASSERT_EQUAL_MESSAGE(res, DS_STATUS_FULL, "overflow");
 }
 
-static void test_dsStack_empty()
-{
+static void test_dsStack_empty() {
     TEST_ASSERT_EQUAL_MESSAGE(ds_stack_counts(stack), 0, "unexpected counts!");
     DS_STATUS res;
-    void* data;
+    void *data;
     res = ds_stack_pop(stack, &data);
     TEST_ASSERT_EQUAL_MESSAGE(res, DS_STATUS_EMPTY, "empty");
 }
 
-static void test_dsStack_store()
-{
+static void test_dsStack_store() {
     TEST_ASSERT_EQUAL_MESSAGE(ds_stack_counts(stack), 0, "unexpected counts!");
-    char* strs[3] = {"one", "two", "three"};
-    for(int i = 0; i < 3; ++i)
+    char *strs[3] = {"one", "two", "three"};
+    for (int i = 0; i < 3; ++i)
         ds_stack_push(stack, strs[i]);
-    void* data;
+    void *data;
     DS_STATUS res = ds_stack_pop(stack, &data);
     TEST_ASSERT_EQUAL(res, DS_STATUS_OK);
-    TEST_ASSERT_TRUE(!strcmp((char*)data, "three"));
+    TEST_ASSERT_TRUE(!strcmp((char *)data, "three"));
     res = ds_stack_clear(stack);
     TEST_ASSERT_EQUAL(res, DS_STATUS_OK);
     TEST_ASSERT_EQUAL_MESSAGE(ds_stack_counts(stack), 0, "unexpected counts!");
 }
 
-int main(void)
-{
+int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_dsStack_counts);
     RUN_TEST(test_dsStack_overflow);

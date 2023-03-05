@@ -1,3 +1,4 @@
 build/*
 .DS_Store
 tests/.DS_Store
+.cache
